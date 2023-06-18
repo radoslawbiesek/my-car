@@ -1,0 +1,68 @@
+---
+import classnames from "classnames";
+
+import Layout from "@layouts/Layout.astro";
+
+const rememberCheckedValue = "true";
+const errors = { password: "" };
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const password = data.get("password");
+    const remember = data.get("remember");
+
+    if (typeof password !== "string" || password.length < 1) {
+      errors.password = "Nieprawidłowe hasło";
+    }
+    console.log(password, remember);
+
+    if (!errors.password) {
+      return Astro.redirect("/");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+---
+
+<Layout title="Logowanie">
+  <main>
+    <h1>Logowanie</h1>
+    <form method="POST">
+      <div class="form-control w-full max-w-xs mt-3">
+        <input
+          name="password"
+          type="password"
+          placeholder="Hasło"
+          class={classnames("input input-bordered w-full max-w-xs", {
+            "input-error": errors.password,
+          })}
+          required
+        />
+        {
+          errors.password && (
+            <label class="label">
+              <span class="label-text-alt text-error">{errors.password}</span>
+            </label>
+          )
+        }
+      </div>
+      <div class="form-control w-full max-w-xs mt-1">
+        <label class="label justify-start cursor-pointer">
+          <input
+            name="remember"
+            type="checkbox"
+            checked="checked"
+            value={rememberCheckedValue}
+            class="checkbox checkbox-primary"
+          />
+          <span class="label-text ml-3">Zapamiętaj mnie</span>
+        </label>
+      </div>
+      <div class="form-control w-full max-w-xs mt-3">
+        <input type="submit" value="Zaloguj" class="btn btn-primary" />
+      </div>
+    </form>
+  </main>
+</Layout>

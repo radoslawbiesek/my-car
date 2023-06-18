@@ -14,10 +14,8 @@ if (Astro.request.method === "POST") {
     const password = typeof passwordRaw === "string" ? passwordRaw : "";
     const remember = data.get("remember") === REMEMBER_CHECKED_VALUE;
 
-    console.log(remember);
     const authService = new AuthService(Astro.cookies);
     const isValid = authService.login(password, remember);
-    console.log(isValid);
     if (isValid) {
       return Astro.redirect("/");
     }
@@ -30,7 +28,7 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Logowanie">
-  <main>
+  <div>
     <h1>Logowanie</h1>
     <form method="POST">
       <div class="form-control w-full max-w-xs mt-3">
@@ -67,5 +65,5 @@ if (Astro.request.method === "POST") {
         <input type="submit" value="Zaloguj" class="btn btn-primary" />
       </div>
     </form>
-  </main>
+  </div>
 </Layout>

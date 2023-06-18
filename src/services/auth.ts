@@ -2,7 +2,7 @@ import type { AstroCookies } from "astro";
 import jwt from "jsonwebtoken";
 
 const AUTH_COOKIE = "Authorization";
-const DEFAULT_EXPIRES_IN = 8 * 60; // 8 hours
+const DEFAULT_EXPIRES_IN = 8 * 60 * 60; // 8 hours
 const SHORT_EXPIRES_IN = 120; // 120 seconds
 
 export class AuthService {
@@ -29,8 +29,6 @@ export class AuthService {
 
   #createToken(expiresIn: number) {
     const token = jwt.sign({}, this.secret, { expiresIn });
-
-    console.log(token);
 
     return token;
   }

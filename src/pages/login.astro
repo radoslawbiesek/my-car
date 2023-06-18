@@ -1,6 +1,5 @@
 ---
-import classnames from "classnames";
-
+import InputField from "@components/InputField.astro";
 import Layout from "@layouts/Layout.astro";
 import { AuthService } from "@services/auth";
 
@@ -31,24 +30,15 @@ if (Astro.request.method === "POST") {
   <div>
     <h1>Logowanie</h1>
     <form method="POST">
-      <div class="form-control w-full max-w-xs mt-3">
-        <input
-          name="password"
-          type="password"
-          placeholder="Hasło"
-          class={classnames("input input-bordered w-full max-w-xs", {
-            "input-error": errors.password,
-          })}
-          required
-        />
-        {
-          errors.password && (
-            <label class="label">
-              <span class="label-text-alt text-error">{errors.password}</span>
-            </label>
-          )
-        }
-      </div>
+      <InputField
+        class="w-full max-w-xs mt-3"
+        name="password"
+        type="password"
+        placeholder="Hasło"
+        label="Hasło"
+        error={errors.password}
+      />
+
       <div class="form-control w-full max-w-xs mt-1">
         <label class="label justify-start cursor-pointer">
           <input
@@ -61,7 +51,8 @@ if (Astro.request.method === "POST") {
           <span class="label-text ml-3">Zapamiętaj mnie</span>
         </label>
       </div>
-      <div class="form-control w-full max-w-xs mt-3">
+
+      <div class="form-control w-full max-w-sm mt-10">
         <input type="submit" value="Zaloguj" class="btn btn-primary" />
       </div>
     </form>

@@ -1,0 +1,46 @@
+---
+import classnames from "classnames";
+
+export interface Props extends astroHTML.JSX.InputHTMLAttributes {
+  error?: string;
+  class?: string;
+  label?: string;
+}
+
+const {
+  name,
+  type = "text",
+  label,
+  error,
+  placeholder,
+  class: cls,
+  ...rest
+} = Astro.props;
+---
+
+<div class={classnames("form-control", cls)}>
+  {
+    label && (
+      <label class="label" for={name}>
+        <span class="label-text-alt">{label}</span>
+      </label>
+    )
+  }
+  <input
+    name={name}
+    type={type}
+    placeholder={placeholder}
+    class={classnames("input input-bordered w-full max-w-xs", {
+      "input-error": error,
+    })}
+    required
+    {...rest}
+  />
+  {
+    error && (
+      <label class="label">
+        <span class="label-text-alt text-error">{error}</span>
+      </label>
+    )
+  }
+</div>

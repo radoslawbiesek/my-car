@@ -4,6 +4,7 @@ export interface Props {
 }
 
 const { title } = Astro.props;
+const { isLoggedIn } = Astro.locals;
 ---
 
 <!DOCTYPE html>
@@ -17,7 +18,19 @@ const { title } = Astro.props;
     <title>{`${title ? `${title} | ` : ""}Mój samochód`}</title>
   </head>
   <body>
-    <main class="h-screen flex justify-center items-center">
+    <header class="p-4 flex justify-between">
+      <h1>Mój samochód</h1>
+      {
+        isLoggedIn && (
+          <a href="/logout" class="btn btn-xs btn-secondary">
+            Wyloguj
+          </a>
+        )
+      }
+    </header>
+    <main
+      class="h-screen flex justify-center items-center w-screen max-w-screen-sm"
+    >
       <slot />
     </main>
   </body>

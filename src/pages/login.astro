@@ -2,24 +2,27 @@
 import classnames from "classnames";
 
 import Layout from "@layouts/Layout.astro";
+import { AuthService } from "@services/auth";
 
-const rememberCheckedValue = "true";
+const REMEMBER_CHECKED_VALUE = "true";
 const errors = { password: "" };
 
 if (Astro.request.method === "POST") {
   try {
     const data = await Astro.request.formData();
-    const password = data.get("password");
-    const remember = data.get("remember");
+    const passwordRaw = data.get("password");
+    const password = typeof passwordRaw === "string" ? passwordRaw : "";
+    const remember = data.get("remember") === REMEMBER_CHECKED_VALUE;
 
-    if (typeof password !== "string" || password.length < 1) {
-      errors.password = "Nieprawidłowe hasło";
-    }
-    console.log(password, remember);
-
-    if (!errors.password) {
+    console.log(remember);
+    const authService = new AuthService(Astro.cookies);
+    const isValid = authService.login(password, remember);
+    console.log(isValid);
+    if (isValid) {
       return Astro.redirect("/");
     }
+
+    errors.password = "Nieprawidłowe hasło";
   } catch (error) {
     console.error(error);
   }
@@ -54,7 +57,7 @@ if (Astro.request.method === "POST") {
             name="remember"
             type="checkbox"
             checked="checked"
-            value={rememberCheckedValue}
+            value={REMEMBER_CHECKED_VALUE}
             class="checkbox checkbox-primary"
           />
           <span class="label-text ml-3">Zapamiętaj mnie</span>

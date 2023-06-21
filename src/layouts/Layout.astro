@@ -18,6 +18,7 @@ const { isLoggedIn } = Astro.locals;
     <title>{`${title ? `${title} | ` : ''}Mój samochód`}</title>
   </head>
   <body>
+    <div class="h-screen mx-auto w-screen max-w-screen-sm p-2">
     <header class="flex justify-between p-4">
       <h1>Mój samochód</h1>
       {
@@ -28,8 +29,9 @@ const { isLoggedIn } = Astro.locals;
         )
       }
     </header>
-    <main class="flex h-screen w-screen max-w-screen-sm items-center justify-center">
+    <main class="flex items-center justify-center">
       <slot />
     </main>
+  </div>
   </body>
 </html>

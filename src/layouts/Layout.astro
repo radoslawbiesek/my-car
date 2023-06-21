@@ -18,20 +18,20 @@ const { isLoggedIn } = Astro.locals;
     <title>{`${title ? `${title} | ` : ''}Mój samochód`}</title>
   </head>
   <body>
-    <div class="h-screen mx-auto w-screen max-w-screen-sm p-2">
-    <header class="flex justify-between p-4">
-      <h1>Mój samochód</h1>
-      {
-        isLoggedIn && (
-          <a href="/logout" class="btn-secondary btn-xs btn">
-            Wyloguj
-          </a>
-        )
-      }
-    </header>
-    <main class="flex items-center justify-center">
-      <slot />
-    </main>
-  </div>
+    <div class="mx-auto h-screen w-screen max-w-screen-sm p-2">
+      <header class="flex justify-between p-4">
+        <h1>Mój samochód</h1>
+        {
+          isLoggedIn && (
+            <a href="/logout" class="btn-secondary btn-xs btn">
+              Wyloguj
+            </a>
+          )
+        }
+      </header>
+      <main class="flex items-center justify-center">
+        <slot />
+      </main>
+    </div>
   </body>
 </html>

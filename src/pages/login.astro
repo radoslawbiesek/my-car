@@ -1,25 +1,25 @@
 ---
-import InputField from "@components/InputField.astro";
-import Layout from "@layouts/Layout.astro";
-import { AuthService } from "@services/auth";
+import InputField from '@components/InputField.astro';
+import Layout from '@layouts/Layout.astro';
+import { AuthService } from '@services/auth';
 
-const REMEMBER_CHECKED_VALUE = "true";
-const errors = { password: "" };
+const REMEMBER_CHECKED_VALUE = 'true';
+const errors = { password: '' };
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === 'POST') {
   try {
     const data = await Astro.request.formData();
-    const passwordRaw = data.get("password");
-    const password = typeof passwordRaw === "string" ? passwordRaw : "";
-    const remember = data.get("remember") === REMEMBER_CHECKED_VALUE;
+    const passwordRaw = data.get('password');
+    const password = typeof passwordRaw === 'string' ? passwordRaw : '';
+    const remember = data.get('remember') === REMEMBER_CHECKED_VALUE;
 
     const authService = new AuthService(Astro.cookies);
     const isValid = authService.login(password, remember);
     if (isValid) {
-      return Astro.redirect("/");
+      return Astro.redirect('/');
     }
 
-    errors.password = "Nieprawidłowe hasło";
+    errors.password = 'Nieprawidłowe hasło';
   } catch (error) {
     console.error(error);
   }
@@ -31,7 +31,7 @@ if (Astro.request.method === "POST") {
     <h1>Logowanie</h1>
     <form method="POST">
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="password"
         type="password"
         placeholder="Hasło"
@@ -39,21 +39,21 @@ if (Astro.request.method === "POST") {
         error={errors.password}
       />
 
-      <div class="form-control w-full max-w-xs mt-1">
-        <label class="label justify-start cursor-pointer">
+      <div class="form-control mt-1 w-full max-w-xs">
+        <label class="label cursor-pointer justify-start">
           <input
             name="remember"
             type="checkbox"
             checked="checked"
             value={REMEMBER_CHECKED_VALUE}
-            class="checkbox checkbox-primary"
+            class="checkbox-primary checkbox"
           />
           <span class="label-text ml-3">Zapamiętaj mnie</span>
         </label>
       </div>
 
-      <div class="form-control w-full max-w-sm mt-10">
-        <input type="submit" value="Zaloguj" class="btn btn-primary" />
+      <div class="form-control mt-10 w-full max-w-sm">
+        <input type="submit" value="Zaloguj" class="btn-primary btn" />
       </div>
     </form>
   </div>

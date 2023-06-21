@@ -15,22 +15,20 @@ const { isLoggedIn } = Astro.locals;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{`${title ? `${title} | ` : ""}Mój samochód`}</title>
+    <title>{`${title ? `${title} | ` : ''}Mój samochód`}</title>
   </head>
   <body>
-    <header class="p-4 flex justify-between">
+    <header class="flex justify-between p-4">
       <h1>Mój samochód</h1>
       {
         isLoggedIn && (
-          <a href="/logout" class="btn btn-xs btn-secondary">
+          <a href="/logout" class="btn-secondary btn-xs btn">
             Wyloguj
           </a>
         )
       }
     </header>
-    <main
-      class="h-screen flex justify-center items-center w-screen max-w-screen-sm"
-    >
+    <main class="flex h-screen w-screen max-w-screen-sm items-center justify-center">
       <slot />
     </main>
   </body>

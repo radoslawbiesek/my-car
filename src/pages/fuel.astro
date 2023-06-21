@@ -1,26 +1,28 @@
 ---
-import InputField from "@components/InputField.astro";
-import Layout from "@layouts/Layout.astro";
+import Layout from '@layouts/Layout.astro';
 
-const todayStr = new Date().toISOString().split("T")[0];
-const vatDeductionOptions = [0, 0.5, 1];
+import InputField from '@components/InputField.astro';
+import SelectField from '@components/SelectField.astro';
+
+const TODAY_STR = new Date().toISOString().split('T')[0];
+const VAT_DEDUCTION_OPTIONS = [0, 0.5, 1] as const;
 
 const errors = {
-  date: "",
-  place: "",
-  mileage: "",
-  amount: "",
-  cost: "",
+  date: '',
+  place: '',
+  mileage: '',
+  amount: '',
+  cost: '',
 };
 let submitted = false;
 
-if (Astro.request.method === "POST") {
+if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData();
-  const date = data.get("date") || todayStr;
-  const place = data.get("place");
-  const mileage = data.get("mileage");
-  const amount = data.get("mileage");
-  const cost = data.get("cost");
+  const date = data.get('date') || TODAY_STR;
+  const place = data.get('place');
+  const mileage = data.get('mileage');
+  const amount = data.get('mileage');
+  const cost = data.get('cost');
 
   console.log({
     date,
@@ -39,16 +41,16 @@ if (Astro.request.method === "POST") {
     <h1>Dodaj tankowanie</h1>
     <form method="POST">
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="date"
         type="date"
         label="Data"
         placeholder="Data"
         error={errors.date}
-        value={todayStr}
+        value={TODAY_STR}
       />
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="place"
         type="text"
         label="Miejsce"
@@ -56,7 +58,7 @@ if (Astro.request.method === "POST") {
         error={errors.place}
       />
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="mileage"
         type="number"
         min="0"
@@ -66,7 +68,7 @@ if (Astro.request.method === "POST") {
         error={errors.mileage}
       />
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="amount"
         type="number"
         min="0"
@@ -76,7 +78,7 @@ if (Astro.request.method === "POST") {
         error={errors.amount}
       />
       <InputField
-        class="w-full max-w-xs mt-3"
+        class="mt-3 w-full max-w-xs"
         name="cost"
         type="number"
         min="0"
@@ -85,29 +87,23 @@ if (Astro.request.method === "POST") {
         placeholder="Koszt (zł)"
         error={errors.cost}
       />
+      <SelectField
+        class="mt-3 w-full max-w-xs"
+        label="Odliczenie VAT"
+        options={VAT_DEDUCTION_OPTIONS.map((value) => ({
+          value: value.toString(),
+          label: value * 100 + '%',
+        }))}
+        selected={VAT_DEDUCTION_OPTIONS[1].toString()}
+      />
 
-      <div class="form-field w-full max-w-xs mt-3">
-        <label class="label">
-          <span class="label-text-alt">Odliczenie VAT</span>
-        </label>
-        <select class="select select-bordered w-full max-w-xs">
-          {
-            vatDeductionOptions.map((value) => (
-              <option value={value} selected={value === vatDeductionOptions[1]}>
-                {value * 100 + "%"}
-              </option>
-            ))
-          }
-        </select>
-      </div>
-
-      <div class="form-control w-full max-w-xs mt-10">
+      <div class="form-control mt-10 w-full max-w-xs">
         {
           submitted && (
             <div class="alert alert-success mb-4 flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
+                class="h-6 w-6 shrink-0 stroke-current"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -122,7 +118,7 @@ if (Astro.request.method === "POST") {
             </div>
           )
         }
-        <input type="submit" value="Dodaj" class="btn btn-primary" />
+        <input type="submit" value="Dodaj" class="btn-primary btn" />
       </div>
     </form>
   </div>

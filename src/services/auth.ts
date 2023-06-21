@@ -1,7 +1,7 @@
-import type { AstroCookies } from "astro";
-import jwt from "jsonwebtoken";
+import type { AstroCookies } from 'astro';
+import jwt from 'jsonwebtoken';
 
-const AUTH_COOKIE = "Authorization";
+const AUTH_COOKIE = 'Authorization';
 const DEFAULT_EXPIRES_IN = 8 * 60 * 60; // 8 hours
 const SHORT_EXPIRES_IN = 120; // 120 seconds
 
@@ -12,11 +12,11 @@ export class AuthService {
   constructor(private readonly cookies: AstroCookies) {
     const expiresInRaw = import.meta.env.JWT_EXPIRES_IN as string | undefined;
     this.expiresIn = this.#parseInt(expiresInRaw) ?? DEFAULT_EXPIRES_IN;
-    this.secret = import.meta.env.JWT_SECRET || "secret";
+    this.secret = import.meta.env.JWT_SECRET || 'secret';
   }
 
   #parseInt(input?: unknown) {
-    if (typeof input !== "string" || parseInt(input).toString() !== input) {
+    if (typeof input !== 'string' || parseInt(input).toString() !== input) {
       return null;
     }
 

@@ -1,38 +1,44 @@
 ---
-import Layout from '@layouts/Layout.astro';
+import { zfd } from 'zod-form-data';
 
+import Layout from '@layouts/Layout.astro';
 import InputField from '@components/InputField.astro';
 import SelectField from '@components/SelectField.astro';
+import ErrorMessage from '@components/ErrorMessage.astro';
+import { handleFormErrors } from '@utils/handleFormErrors';
 
-const TODAY_STR = new Date().toISOString().split('T')[0];
+const TODAY_STR = new Date().toISOString().split('T')[0] as string;
 const VAT_DEDUCTION_OPTIONS = [0, 0.5, 1] as const;
 
 const errors = {
   date: '',
-  place: '',
+  city: '',
+  station: '',
   mileage: '',
   amount: '',
   cost: '',
+  _error: '',
 };
 let submitted = false;
 
 if (Astro.request.method === 'POST') {
-  const data = await Astro.request.formData();
-  const date = data.get('date') || TODAY_STR;
-  const place = data.get('place');
-  const mileage = data.get('mileage');
-  const amount = data.get('mileage');
-  const cost = data.get('cost');
+  try {
+    const schema = zfd.formData({
+      date: zfd.text().optional().default(TODAY_STR),
+      city: zfd.text(),
+      station: zfd.text(),
+      mileage: zfd.numeric(),
+      amount: zfd.numeric(),
+      cost: zfd.numeric(),
+    });
 
-  console.log({
-    date,
-    place,
-    mileage,
-    amount,
-    cost,
-  });
+    const data = schema.parse(await Astro.request.formData());
+    console.log(data);
 
-  submitted = true;
+    submitted = true;
+  } catch (error) {
+    handleFormErrors(errors, error);
+  }
 }
 ---
 
@@ -51,11 +57,19 @@ if (Astro.request.method === 'POST') {
       />
       <InputField
         class="mt-3 w-full max-w-xs"
-        name="place"
+        name="city"
         type="text"
-        label="Miejsce"
-        placeholder="Miejsce"
-        error={errors.place}
+        label="Miasto"
+        placeholder="Miasto"
+        error={errors.city}
+      />
+      <InputField
+        class="mt-3 w-full max-w-xs"
+        name="station"
+        type="text"
+        label="Stacja"
+        placeholder="Stacja"
+        error={errors.station}
       />
       <InputField
         class="mt-3 w-full max-w-xs"
@@ -119,6 +133,7 @@ if (Astro.request.method === 'POST') {
           )
         }
         <input type="submit" value="Dodaj" class="btn-primary btn" />
+        <ErrorMessage error={errors._error} />
       </div>
     </form>
   </div>

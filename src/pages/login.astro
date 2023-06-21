@@ -1,27 +1,33 @@
 ---
-import InputField from '@components/InputField.astro';
-import Layout from '@layouts/Layout.astro';
-import { AuthService } from '@services/auth';
+import { zfd } from 'zod-form-data';
 
-const REMEMBER_CHECKED_VALUE = 'true';
-const errors = { password: '' };
+import Layout from '@layouts/Layout.astro';
+import InputField from '@components/InputField.astro';
+import ErrorMessage from '@components/ErrorMessage.astro';
+import { AuthService } from '@services/auth';
+import { handleFormErrors } from '@utils/handleFormErrors';
+
+const errors = { password: '', remember: '', _error: '' };
 
 if (Astro.request.method === 'POST') {
   try {
-    const data = await Astro.request.formData();
-    const passwordRaw = data.get('password');
-    const password = typeof passwordRaw === 'string' ? passwordRaw : '';
-    const remember = data.get('remember') === REMEMBER_CHECKED_VALUE;
+    const schema = zfd.formData({
+      password: zfd.text(),
+      remember: zfd.checkbox(),
+    });
+
+    const { password, remember } = schema.parse(await Astro.request.formData());
 
     const authService = new AuthService(Astro.cookies);
     const isValid = authService.login(password, remember);
+
     if (isValid) {
       return Astro.redirect('/');
     }
 
     errors.password = 'Nieprawidłowe hasło';
   } catch (error) {
-    console.error(error);
+    handleFormErrors(errors, error);
   }
 }
 ---
@@ -37,6 +43,7 @@ if (Astro.request.method === 'POST') {
         placeholder="Hasło"
         label="Hasło"
         error={errors.password}
+        required
       />
 
       <div class="form-control mt-1 w-full max-w-xs">
@@ -45,7 +52,6 @@ if (Astro.request.method === 'POST') {
             name="remember"
             type="checkbox"
             checked="checked"
-            value={REMEMBER_CHECKED_VALUE}
             class="checkbox-primary checkbox"
           />
           <span class="label-text ml-3">Zapamiętaj mnie</span>
@@ -55,6 +61,7 @@ if (Astro.request.method === 'POST') {
       <div class="form-control mt-10 w-full max-w-sm">
         <input type="submit" value="Zaloguj" class="btn-primary btn" />
       </div>
+      <ErrorMessage error={errors._error} />
     </form>
   </div>
 </Layout>

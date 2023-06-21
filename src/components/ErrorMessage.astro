@@ -1,0 +1,15 @@
+---
+export interface Props {
+  error?: string | undefined;
+}
+
+const { error } = Astro.props;
+---
+
+{
+  error && (
+    <div class="label">
+      <span class="label-text-alt text-error">{error}</span>
+    </div>
+  )
+}

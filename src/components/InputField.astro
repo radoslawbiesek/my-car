@@ -1,6 +1,8 @@
 ---
 import classnames from 'classnames';
 
+import ErrorMessage from './ErrorMessage.astro';
+
 export interface Props extends astroHTML.JSX.InputHTMLAttributes {
   error?: string;
   class?: string;
@@ -25,14 +27,7 @@ const { name, type = 'text', label, error, placeholder, class: cls, ...rest } = 
     class={classnames('input input-bordered w-full max-w-xs', {
       'input-error': error,
     })}
-    required
     {...rest}
   />
-  {
-    error && (
-      <label class="label">
-        <span class="label-text-alt text-error">{error}</span>
-      </label>
-    )
-  }
+  <ErrorMessage error={error} />
 </div>

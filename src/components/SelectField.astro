@@ -1,43 +1,39 @@
 ---
 import classnames from 'classnames';
 
+import ErrorMessage from './ErrorMessage.astro';
+
 export interface Props extends astroHTML.JSX.SelectHTMLAttributes {
-    error?: string;
-    class?: string;
-    label?: string;
-    options: string[] | { value: string; label: string }[];
-    selected?: string;
+  error?: string;
+  class?: string;
+  label?: string;
+  options: string[] | { value: string; label: string }[];
+  selected?: string;
 }
 
 const { name, label, error, selected, class: cls, options, ...rest } = Astro.props;
 ---
 
 <div class={classnames('form-control', cls)}>
+  {
+    label && (
+      <label class="label" for={name}>
+        <span class="label-text-alt">{label}</span>
+      </label>
+    )
+  }
+  <select class="select-bordered select w-full max-w-xs" {...rest}>
     {
-        label && (
-            <label class="label" for={name}>
-                <span class="label-text-alt">{label}</span>
-            </label>
-        )
+      options.map((option) => {
+        const value = typeof option === 'string' ? option : option.value;
+        const label = typeof option === 'string' ? option : option.label;
+        return (
+          <option value={value} selected={value === selected}>
+            {label}
+          </option>
+        );
+      })
     }
-    <select class="select-bordered select w-full max-w-xs" {...rest}>
-        {
-            options.map((option) => {
-                const value = typeof option === 'string' ? option : option.value;
-                const label = typeof option === 'string' ? option : option.label;
-                return (
-                    <option value={value} selected={value === selected}>
-                        {label}
-                    </option>
-                );
-            })
-        }
-    </select>
-    {
-        error && (
-            <label class="label">
-                <span class="label-text-alt text-error">{error}</span>
-            </label>
-        )
-    }
+  </select>
+  <ErrorMessage error={error} />
 </div>

@@ -7,15 +7,14 @@ import ErrorMessage from '@components/ErrorMessage.astro';
 import { AuthService } from '@services/auth';
 import { handleFormErrors } from '@utils/handleFormErrors';
 
+const schema = zfd.formData({
+  password: zfd.text(),
+  remember: zfd.checkbox(),
+});
 const errors = { password: '', remember: '', _error: '' };
 
 if (Astro.request.method === 'POST') {
   try {
-    const schema = zfd.formData({
-      password: zfd.text(),
-      remember: zfd.checkbox(),
-    });
-
     const { password, remember } = schema.parse(await Astro.request.formData());
 
     const authService = new AuthService(Astro.cookies);

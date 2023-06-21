@@ -6,10 +6,20 @@ import InputField from '@components/InputField.astro';
 import SelectField from '@components/SelectField.astro';
 import ErrorMessage from '@components/ErrorMessage.astro';
 import { handleFormErrors } from '@utils/handleFormErrors';
+import { FuelService } from '@services/fuel';
 
 const TODAY_STR = new Date().toISOString().split('T')[0] as string;
 const VAT_DEDUCTION_OPTIONS = [0, 0.5, 1] as const;
 
+const schema = zfd.formData({
+  date: zfd.text().optional().default(TODAY_STR),
+  city: zfd.text(),
+  station: zfd.text(),
+  mileage: zfd.numeric(),
+  amount: zfd.numeric(),
+  cost: zfd.numeric(),
+  deduction: zfd.numeric(),
+});
 const errors = {
   date: '',
   city: '',
@@ -17,23 +27,17 @@ const errors = {
   mileage: '',
   amount: '',
   cost: '',
+  deduction: '',
   _error: '',
 };
 let submitted = false;
 
+
 if (Astro.request.method === 'POST') {
   try {
-    const schema = zfd.formData({
-      date: zfd.text().optional().default(TODAY_STR),
-      city: zfd.text(),
-      station: zfd.text(),
-      mileage: zfd.numeric(),
-      amount: zfd.numeric(),
-      cost: zfd.numeric(),
-    });
-
     const data = schema.parse(await Astro.request.formData());
-    console.log(data);
+    const fuelService = await FuelService.init();
+    await fuelService.add(data);
 
     submitted = true;
   } catch (error) {
@@ -104,6 +108,7 @@ if (Astro.request.method === 'POST') {
       <SelectField
         class="mt-3 w-full max-w-xs"
         label="Odliczenie VAT"
+        name="deduction"
         options={VAT_DEDUCTION_OPTIONS.map((value) => ({
           value: value.toString(),
           label: value * 100 + '%',

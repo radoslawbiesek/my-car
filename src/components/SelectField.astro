@@ -22,7 +22,7 @@ const { name, label, error, selected, class: cls, options, ...rest } = Astro.pro
       </label>
     )
   }
-  <select class="select-bordered select w-full max-w-xs" {...rest}>
+  <select class="select-bordered select w-full max-w-xs" name={name} {...rest}>
     {
       options.map((option) => {
         const value = typeof option === 'string' ? option : option.value;

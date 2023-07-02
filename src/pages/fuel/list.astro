@@ -38,7 +38,7 @@ const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
       <a href="/fuel/add" class="btn-success btn-outline btn-sm btn">Dodaj</a>
     </div>
     <div class="m-2 overflow-x-auto">
-      <table class="table-xs table">
+      <table class="table-pin-rows table-pin-cols table-xs table">
         <thead>
           <tr>
             <th></th>
@@ -66,7 +66,11 @@ const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
                 <td>{row.cost.toFixed(2)} zł</td>
                 <td>{row.deduction * 100}%</td>
                 <td>{calculateCost(row.cost, row.deduction).toFixed(2)} zł</td>
-                <td>{index > 0 ? calculateFuelUsage(rows.slice(index - 1, index + 1)).toFixed(2) : '-'}</td>
+                <td>
+                  {index > 0
+                    ? calculateFuelUsage(rows.slice(index - 1, index + 1)).toFixed(2)
+                    : '-'}
+                </td>
               </tr>
             ))
           }

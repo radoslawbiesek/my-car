@@ -1,16 +1,40 @@
 ---
+import classnames from 'classnames';
+
 import Layout from '@layouts/Layout.astro';
 import { FuelService } from '@services/fuel';
-import { calculateCost } from '@utils/fuel';
+import { calculateCost, calculateFuelUsage } from '@utils/fuel';
 
 const fuelService = FuelService.getInstance();
 const rows = await fuelService.getAll();
+
+const totalFuelUsage = calculateFuelUsage(rows);
+const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
 ---
 
 <Layout title="Paliwo">
   <div class="w-full">
-    <div class="mt-2 flex justify-between">
-      <h1>Lista tankowań</h1>
+    <div class="stats flex">
+      <div class="stat place-items-center">
+        <div class="stat-title">Ostatnie spalanie</div>
+        <div
+          class={classnames(
+            'stat-value',
+            lastFuelUsage < totalFuelUsage ? 'text-success' : 'text-error',
+          )}
+        >
+          {lastFuelUsage}
+        </div>
+        <div class="stat-desc">l / 100 km</div>
+      </div>
+      <div class="stat place-items-center">
+        <div class="stat-title">Całkowite spalanie</div>
+        <div class="stat-value">{totalFuelUsage}</div>
+        <div class="stat-desc">l / 100 km</div>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-between">
+      <h1>Tankowania</h1>
       <a href="/fuel/add" class="btn-success btn-outline btn-sm btn">Dodaj</a>
     </div>
     <div class="m-2 overflow-x-auto">

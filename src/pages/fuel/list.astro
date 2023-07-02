@@ -32,11 +32,11 @@ const rows = await fuelService.getAll();
             rows.map((row, index) => (
               <tr>
                 <th>{index + 1}</th>
-                <td>{row.date}</td>
+                <td>{new Date(row.date).toLocaleDateString('pl-PL')}</td>
                 <td>
                   {row.station} - {row.city}
                 </td>
-                <td>{row.mileage} km</td>
+                <td>{row.mileage}</td>
                 <td>{row.amount} l</td>
                 <td>{row.cost.toFixed(2)} zł</td>
                 <td>{row.deduction * 100}%</td>

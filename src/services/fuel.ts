@@ -71,7 +71,7 @@ export class FuelService {
       city: row.get('city'),
       station: row.get('station'),
       mileage: parseInt(row.get('mileage')),
-      amount: parseInt(row.get('amount')),
+      amount: parseFloat(row.get('amount').replace(',', '.')),
       cost: parseFloat(row.get('cost').replace(',', '.')), // '100,01' -> 100.01
       deduction: parseInt(row.get('deduction')) / 100, // '50%' -> 0.5
     }));

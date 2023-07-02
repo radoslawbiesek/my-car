@@ -1,20 +1,21 @@
 {
   "name": "my-car",
   "type": "module",
-  "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest"
   },
   "dependencies": {
     "@astrojs/tailwind": "^3.1.3",
     "@astrojs/vercel": "^3.5.0",
     "astro": "^2.6.4",
     "classnames": "^2.3.2",
-    "google-spreadsheet": "^3.3.0",
+    "google-auth-library": "^8.9.0",
+    "google-spreadsheet": "^4.0.2",
     "jsonwebtoken": "^9.0.0",
     "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.3.2",
@@ -22,10 +23,10 @@
     "zod-form-data": "^2.0.1"
   },
   "devDependencies": {
-    "@types/google-spreadsheet": "^3.3.2",
     "@types/jsonwebtoken": "^9.0.2",
     "daisyui": "^3.1.1",
     "prettier": "^2.8.8",
-    "prettier-plugin-astro": "^0.10.0"
+    "prettier-plugin-astro": "^0.10.0",
+    "vitest": "^0.32.2"
   }
 }

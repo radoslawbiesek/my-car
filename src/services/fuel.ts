@@ -18,6 +18,7 @@ type FuelRowData = {
 export class FuelService {
   private static instance: FuelService;
   private sheet!: GoogleSpreadsheetWorksheet;
+  private rows!: Awaited<ReturnType<typeof this.fetchRows>> | null;
 
   private constructor() {}
 
@@ -47,7 +48,7 @@ export class FuelService {
       await this.load();
     }
 
-    return await this.sheet.addRow([
+    const row = await this.sheet.addRow([
       data.date,
       data.city,
       data.station,
@@ -56,13 +57,13 @@ export class FuelService {
       data.cost,
       data.deduction,
     ]);
+
+    this.rows = null;
+
+    return row;
   }
 
-  async getAll() {
-    if (!this.sheet) {
-      await this.load();
-    }
-
+  private async fetchRows() {
     const rows = await this.sheet.getRows<FuelRowData>();
 
     const formattedRows = rows.map((row) => ({
@@ -76,5 +77,17 @@ export class FuelService {
     }));
 
     return formattedRows;
+  }
+
+  async getAll() {
+    if (!this.sheet) {
+      await this.load();
+    }
+
+    if (!this.rows) {
+      this.rows = await this.fetchRows();
+    }
+
+    return this.rows;
   }
 }

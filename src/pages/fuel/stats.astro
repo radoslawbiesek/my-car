@@ -1,0 +1,36 @@
+---
+import classnames from 'classnames';
+
+import Card from '@components/Card.astro';
+import FuelLayout from '@layouts/FuelLayout.astro';
+import { FuelService } from '@services/fuel';
+
+const fuelService = FuelService.getInstance();
+const { totalFuelUsage, lastFuelUsage } = await fuelService.getData();
+---
+
+<FuelLayout>
+  <div class="mt-3">
+    <Card>
+      <div class="stats flex">
+        <div class="stat place-items-center">
+          <div class="stat-title">Ostatnie spalanie</div>
+          <div
+            class={classnames(
+              'stat-value',
+              lastFuelUsage < totalFuelUsage ? 'text-success' : 'text-error',
+            )}
+          >
+            {lastFuelUsage}
+          </div>
+          <div class="stat-desc">l / 100 km</div>
+        </div>
+        <div class="stat place-items-center">
+          <div class="stat-title">Całkowite spalanie</div>
+          <div class="stat-value">{totalFuelUsage}</div>
+          <div class="stat-desc">l / 100 km</div>
+        </div>
+      </div>
+    </Card>
+  </div>
+</FuelLayout>

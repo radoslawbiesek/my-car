@@ -1,6 +1,6 @@
 const VAT = 0.23;
 
-export function calculateCost(cost: number, vatDeduction: number) {
+export function calculateCost(cost: number, vatDeduction: number): number {
   const multiplier = (1 + VAT * (1 - vatDeduction)) / (1 + VAT);
   return parseFloat((cost * multiplier).toFixed(2));
 }
@@ -14,4 +14,16 @@ export function calculateFuelUsage(rows: { mileage: number; amount: number }[]) 
   const totalAmount = rows.slice(1).reduce((total, row) => total + row.amount, 0);
 
   return parseFloat(((totalAmount / totalMileage) * 100).toFixed(2));
+}
+
+export function sum(arr: number[]): number {
+  return arr.reduce((total, num) => total + num, 0);
+}
+
+export function average(arr: number[]): number {
+  return sum(arr) / arr.length;
+}
+
+export function zloty(amount: number) {
+  return `${amount.toFixed(2)} zł`;
 }

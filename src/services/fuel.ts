@@ -1,6 +1,7 @@
 import { GoogleSpreadsheet, GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
+import { calculateCost, calculateFuelUsage, sum, average, zloty } from '@utils/fuel';
 type FuelData = {
   date: string;
   city: string;
@@ -89,5 +90,25 @@ export class FuelService {
     }
 
     return this.rows;
+  }
+
+  async getData() {
+    const initialRows = await this.getAll();
+
+    const rows = initialRows.map((r) => {
+      const costReduced = calculateCost(r.cost, r.deduction);
+      const costDiff = r.cost - costReduced;
+
+      return { ...r, costReduced, costDiff };
+    });
+
+    const totalFuelUsage = calculateFuelUsage(rows);
+    const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
+
+    return {
+      rows,
+      totalFuelUsage,
+      lastFuelUsage,
+    };
   }
 }

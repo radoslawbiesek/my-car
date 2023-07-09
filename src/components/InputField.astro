@@ -24,7 +24,7 @@ const { name, type = 'text', label, error, placeholder, class: cls, ...rest } = 
     name={name}
     type={type}
     placeholder={placeholder || label}
-    class={classnames('input input-bordered input-sm w-full max-w-sm', {
+    class={classnames('input input-bordered input-sm w-full', {
       'input-error': error,
     })}
     {...rest}

@@ -8,7 +8,7 @@ const { isLoggedIn } = Astro.locals;
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-theme="business">
+<html lang="en" data-theme="night">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
@@ -17,10 +17,10 @@ const { isLoggedIn } = Astro.locals;
     <meta name="generator" content={Astro.generator} />
     <title>{`${title ? `${title} | ` : ''}Mój samochód`}</title>
   </head>
-  <body>
-    <div class="mx-auto h-screen w-screen max-w-screen-sm p-2">
-      <header class="flex justify-between p-4">
-        <h1>Mój samochód</h1>
+  <body class="bg-base-200">
+    <div class="mx-auto h-screen w-screen max-w-screen-sm">
+      <header class="navbar flex justify-between bg-base-100 p-4">
+        <h1 class="text-xl font-bold">Mój samochód</h1>
         {
           isLoggedIn && (
             <a href="/logout" class="btn-secondary btn-xs btn">
@@ -29,7 +29,7 @@ const { isLoggedIn } = Astro.locals;
           )
         }
       </header>
-      <main class="flex flex-col items-center justify-center">
+      <main class="mt-4 flex flex-col items-center justify-center">
         <slot />
       </main>
     </div>

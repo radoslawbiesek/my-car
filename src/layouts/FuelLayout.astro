@@ -1,0 +1,69 @@
+---
+import classnames from 'classnames';
+
+import Card from '@components/Card.astro';
+import RootLayout from '@layouts/RootLayout.astro';
+
+const url = new URL(Astro.request.url);
+const search = new URLSearchParams(url.search);
+
+const from = search.get('from');
+const to = search.get('to');
+
+const tabs = [
+  {
+    label: 'Tabela',
+    pathname: '/fuel/list',
+  },
+  { label: 'Statystyki', pathname: '/fuel/stats' },
+].map((tab) => ({
+  ...tab,
+  active: tab.pathname === url.pathname,
+  href: `${tab.pathname}?${search.toString()}`,
+}));
+---
+
+<RootLayout title="Paliwo">
+  <Card>
+    <div class="flex items-center justify-between">
+      <div class="py-2- flex items-center">
+        <h2 class="card-title mr-2">Zużycie paliwa</h2>
+      </div>
+      <a href="/fuel/add" class="btn-success btn-outline btn-xs btn">Dodaj</a>
+    </div>
+
+    <div class="join mt-2 w-full">
+      {
+        tabs.map((tab) => (
+          <a
+            class={classnames('btn-outline btn-xs join-item btn', {
+              'btn-accent btn-active': tab.active,
+            })}
+            href={tab.href}
+          >
+            {tab.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <form class="join-vertical join mt-4 w-full md:join-horizontal">
+      <div class="bordered join-item bg-base-200">
+        <label class="label px-2 py-1" for="from">
+          <span class="label-text text-xs font-semibold">Od</span>
+        </label>
+      </div>
+      <input class="input-bordered input input-xs join-item" type="date" name="from" value={from} />
+
+      <div class="bordered join-item bg-base-200">
+        <label class="label px-2 py-1" for="to">
+          <span class="label-text text-xs font-semibold">do</span>
+        </label>
+      </div>
+      <input class="input-bordered input input-xs join-item" type="date" name="to" value={to} />
+
+      <button class="btn-xs join-item btn">Filtruj</button>
+    </form>
+  </Card>
+  <slot />
+</RootLayout>

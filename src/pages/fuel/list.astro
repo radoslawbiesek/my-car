@@ -1,81 +1,72 @@
 ---
-import classnames from 'classnames';
-
-import Layout from '@layouts/Layout.astro';
+import Card from '@components/Card.astro';
+import FuelLayout from '@layouts/FuelLayout.astro';
 import { FuelService } from '@services/fuel';
-import { calculateCost, calculateFuelUsage } from '@utils/fuel';
+import { calculateFuelUsage, sum, average, zloty } from '@utils/fuel';
 
 const fuelService = FuelService.getInstance();
-const rows = await fuelService.getAll();
-
-const totalFuelUsage = calculateFuelUsage(rows);
-const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
+const { rows, totalFuelUsage } = await fuelService.getData();
 ---
 
-<Layout title="Paliwo">
-  <div class="w-full">
-    <div class="stats flex">
-      <div class="stat place-items-center">
-        <div class="stat-title">Ostatnie spalanie</div>
-        <div
-          class={classnames(
-            'stat-value',
-            lastFuelUsage < totalFuelUsage ? 'text-success' : 'text-error',
-          )}
-        >
-          {lastFuelUsage}
-        </div>
-        <div class="stat-desc">l / 100 km</div>
+<FuelLayout>
+  <div class="mt-3 w-full">
+    <Card>
+      <div class="m-2 overflow-x-auto">
+        <table class="table-pin-rows table-xs table">
+          <thead>
+            <tr class="bg-base-200">
+              <th></th>
+              <th>Data</th>
+              <th>Miejsce</th>
+              <th>Przebieg</th>
+              <th>Ilość paliwa</th>
+              <th>Koszt brutto</th>
+              <th>Spalanie</th>
+              <th>Odliczenie VAT</th>
+              <th>Koszt netto</th>
+              <th>Różnica</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              rows.map((row, index, rows) => (
+                <tr>
+                  <th>{index + 1}</th>
+                  <td>{new Date(row.date).toLocaleDateString('pl-PL')}</td>
+                  <td>
+                    {row.station} - {row.city}
+                  </td>
+                  <td>{row.mileage}</td>
+                  <td>{row.amount} l</td>
+                  <td>{zloty(row.cost)}</td>
+                  <td>
+                    {index > 0
+                      ? calculateFuelUsage(rows.slice(index - 1, index + 1)).toFixed(2)
+                      : '-'}
+                  </td>
+                  <td>{row.deduction * 100}%</td>
+                  <td>{zloty(row.costReduced)}</td>
+                  <td>{zloty(row.cost - row.costReduced)}</td>
+                </tr>
+              ))
+            }
+            {
+              rows.length > 0 && (
+                <tr class="bg-base-200 font-semibold">
+                  <th colspan="3" />
+                  <td>{rows.at(-1)!.mileage - rows[0]!.mileage}</td>
+                  <td>{sum(rows.map((r) => r.amount))} l</td>
+                  <td>{zloty(sum(rows.map((r) => r.cost)))}</td>
+                  <td>{totalFuelUsage}</td>
+                  <td>{(average(rows.map((r) => r.deduction)) * 100).toFixed(0)}%</td>
+                  <td>{zloty(sum(rows.map((r) => r.costReduced)))}</td>
+                  <td>{zloty(sum(rows.map((r) => r.costDiff)))}</td>
+                </tr>
+              )
+            }
+          </tbody>
+        </table>
       </div>
-      <div class="stat place-items-center">
-        <div class="stat-title">Całkowite spalanie</div>
-        <div class="stat-value">{totalFuelUsage}</div>
-        <div class="stat-desc">l / 100 km</div>
-      </div>
-    </div>
-    <div class="mt-6 flex justify-between">
-      <h1>Tankowania</h1>
-      <a href="/fuel/add" class="btn-success btn-outline btn-sm btn">Dodaj</a>
-    </div>
-    <div class="m-2 overflow-x-auto">
-      <table class="table-pin-rows table-pin-cols table-xs table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Data</th>
-            <th>Miejsce</th>
-            <th>Przebieg</th>
-            <th>Ilość paliwa</th>
-            <th>Koszt brutto</th>
-            <th>Odliczenie VAT</th>
-            <th>Koszt netto</th>
-            <th>Spalanie</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            rows.map((row, index, rows) => (
-              <tr>
-                <th>{index + 1}</th>
-                <td>{new Date(row.date).toLocaleDateString('pl-PL')}</td>
-                <td>
-                  {row.station} - {row.city}
-                </td>
-                <td>{row.mileage}</td>
-                <td>{row.amount} l</td>
-                <td>{row.cost.toFixed(2)} zł</td>
-                <td>{row.deduction * 100}%</td>
-                <td>{calculateCost(row.cost, row.deduction).toFixed(2)} zł</td>
-                <td>
-                  {index > 0
-                    ? calculateFuelUsage(rows.slice(index - 1, index + 1)).toFixed(2)
-                    : '-'}
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    </div>
+    </Card>
   </div>
-</Layout>
+</FuelLayout>

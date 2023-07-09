@@ -1,7 +1,7 @@
 ---
 import { zfd } from 'zod-form-data';
 
-import Layout from '@layouts/Layout.astro';
+import RootLayout from '@layouts/RootLayout.astro';
 import InputField from '@components/InputField.astro';
 import ErrorMessage from '@components/ErrorMessage.astro';
 import { AuthService } from '@services/auth';
@@ -31,7 +31,7 @@ if (Astro.request.method === 'POST') {
 }
 ---
 
-<Layout title="Logowanie">
+<RootLayout title="Logowanie">
   <div>
     <h1>Logowanie</h1>
     <form method="POST">
@@ -63,4 +63,4 @@ if (Astro.request.method === 'POST') {
       <ErrorMessage error={errors._error} />
     </form>
   </div>
-</Layout>
+</RootLayout>

@@ -2,7 +2,7 @@
 import Card from '@components/Card.astro';
 import FuelLayout from '@layouts/FuelLayout.astro';
 import { FuelService } from '@services/fuel';
-import { calculateFuelUsage, sum, average, zloty } from '@utils/fuel';
+import { calculateFuelUsage, sum, zloty } from '@utils/fuel';
 
 const fuelService = FuelService.getInstance();
 const { rows, totalFuelUsage } = await fuelService.getData();
@@ -24,7 +24,7 @@ const { rows, totalFuelUsage } = await fuelService.getData();
               <th>Spalanie</th>
               <th>Odliczenie VAT</th>
               <th>Koszt netto</th>
-              <th>Różnica</th>
+              <th>Różnica kosztu</th>
             </tr>
           </thead>
           <tbody>
@@ -55,10 +55,16 @@ const { rows, totalFuelUsage } = await fuelService.getData();
                 <tr class="bg-base-200 font-semibold">
                   <th colspan="3" />
                   <td>{rows.at(-1)!.mileage - rows[0]!.mileage}</td>
-                  <td>{sum(rows.map((r) => r.amount))} l</td>
+                  <td>{sum(rows.map((r) => r.amount)).toFixed(2)} l</td>
                   <td>{zloty(sum(rows.map((r) => r.cost)))}</td>
                   <td>{totalFuelUsage}</td>
-                  <td>{(average(rows.map((r) => r.deduction)) * 100).toFixed(0)}%</td>
+                  <td>
+                    {(
+                      (sum(rows.map((r) => r.deduction * r.cost)) / sum(rows.map((r) => r.cost))) *
+                      100
+                    ).toFixed(0)}
+                    %
+                  </td>
                   <td>{zloty(sum(rows.map((r) => r.costReduced)))}</td>
                   <td>{zloty(sum(rows.map((r) => r.costDiff)))}</td>
                 </tr>

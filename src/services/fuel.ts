@@ -1,7 +1,7 @@
 import { GoogleSpreadsheet, GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
-import { calculateCost, calculateFuelUsage, sum, average, zloty } from '@utils/fuel';
+import { calculateCost, calculateFuelUsage } from '@utils/fuel';
 type FuelData = {
   date: string;
   city: string;

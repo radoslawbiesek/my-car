@@ -20,10 +20,6 @@ export function sum(arr: number[]): number {
   return arr.reduce((total, num) => total + num, 0);
 }
 
-export function average(arr: number[]): number {
-  return sum(arr) / arr.length;
-}
-
 export function zloty(amount: number) {
   return `${amount.toFixed(2)} zł`;
 }

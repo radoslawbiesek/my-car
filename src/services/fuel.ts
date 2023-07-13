@@ -1,7 +1,6 @@
-import { GoogleSpreadsheet, GoogleSpreadsheetWorksheet } from 'google-spreadsheet';
-import { JWT } from 'google-auth-library';
-
+import { SheetService } from '@services/sheet';
 import { calculateCost, calculateFuelUsage } from '@utils/fuel';
+
 type FuelData = {
   date: string;
   city: string;
@@ -17,39 +16,13 @@ type FuelRowData = {
 };
 
 export class FuelService {
-  private static instance: FuelService;
-  private sheet!: GoogleSpreadsheetWorksheet;
-  private rows!: Awaited<ReturnType<typeof this.fetchRows>> | null;
-
-  private constructor() {}
-
-  private async load() {
-    const serviceAccountAuth = new JWT({
-      email: import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: import.meta.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const doc = new GoogleSpreadsheet(import.meta.env.GOOGLE_DOCUMENT_ID, serviceAccountAuth);
-    await doc.loadInfo();
-    const sheet = doc.sheetsByIndex[0]!;
-
-    this.sheet = sheet;
-  }
-
-  public static getInstance(): FuelService {
-    if (!FuelService.instance) {
-      FuelService.instance = new FuelService();
-    }
-
-    return FuelService.instance;
-  }
+  constructor() {}
 
   async add(data: FuelData) {
-    if (!this.sheet) {
-      await this.load();
-    }
+    const sheetService = await SheetService.getInstance();
+    const sheet = await sheetService.getSheet('fuel');
 
-    const row = await this.sheet.addRow([
+    const row = await sheet.addRow([
       data.date,
       data.city,
       data.station,
@@ -59,47 +32,39 @@ export class FuelService {
       data.deduction,
     ]);
 
-    this.rows = null;
+    await sheetService.reset();
 
     return row;
   }
 
-  private async fetchRows() {
-    const rows = await this.sheet.getRows<FuelRowData>();
-
-    const formattedRows = rows.map((row) => ({
-      date: row.get('date'),
-      city: row.get('city'),
-      station: row.get('station'),
-      mileage: parseInt(row.get('mileage')),
-      amount: parseFloat(row.get('amount')?.replace(',', '.').replace(' ', '')),
-      cost: parseFloat(row.get('cost')?.replace(',', '.').replace(' ', '')), // '100 000,01' -> 100000.01
-      deduction: parseInt(row.get('deduction')) / 100, // '50%' -> 0.5
-    }));
-
-    return formattedRows;
-  }
-
-  async getAll() {
-    if (!this.sheet) {
-      await this.load();
-    }
-
-    if (!this.rows) {
-      this.rows = await this.fetchRows();
-    }
-
-    return this.rows;
-  }
-
   async getData() {
-    const initialRows = await this.getAll();
+    const sheetService = await SheetService.getInstance();
+    const sheet = await sheetService.getSheet('fuel');
 
-    const rows = initialRows.map((r) => {
-      const costReduced = calculateCost(r.cost, r.deduction);
-      const costDiff = r.cost - costReduced;
+    const initialRows = await sheet.getRows<FuelRowData>();
 
-      return { ...r, costReduced, costDiff };
+    const rows = initialRows.map((row) => {
+      const date = row.get('date');
+      const city = row.get('city');
+      const station = row.get('station');
+      const mileage = parseInt(row.get('mileage'));
+      const amount = parseFloat(row.get('amount')?.replace(',', '.').replace(' ', ''));
+      const cost = parseFloat(row.get('cost')?.replace(',', '.').replace(' ', '')); // '100 000,01' -> 100000.01
+      const deduction = parseInt(row.get('deduction')) / 100; // '50%' -> 0.5
+      const costReduced = calculateCost(cost, deduction);
+      const costDiff = cost - costReduced;
+
+      return {
+        date,
+        city,
+        station,
+        mileage,
+        amount,
+        cost,
+        deduction,
+        costReduced,
+        costDiff,
+      };
     });
 
     const totalFuelUsage = calculateFuelUsage(rows);

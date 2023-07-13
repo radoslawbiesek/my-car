@@ -33,14 +33,11 @@ const errors = {
   deduction: '',
   _error: '',
 };
-const fuelService = FuelService.getInstance();
-
-await fuelService.getAll();
 
 if (Astro.request.method === 'POST') {
   try {
     const data = schema.parse(await Astro.request.formData());
-    const fuelService = FuelService.getInstance();
+    const fuelService = new FuelService();
     await fuelService.add(data);
 
     return Astro.redirect('/success');

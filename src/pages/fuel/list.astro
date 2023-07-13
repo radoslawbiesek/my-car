@@ -4,7 +4,7 @@ import FuelLayout from '@layouts/FuelLayout.astro';
 import { FuelService } from '@services/fuel';
 import { calculateFuelUsage, sum, zloty } from '@utils/fuel';
 
-const fuelService = FuelService.getInstance();
+const fuelService = new FuelService();
 const { rows, totalFuelUsage } = await fuelService.getData();
 ---
 

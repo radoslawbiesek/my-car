@@ -23,3 +23,13 @@ export function sum(arr: number[]): number {
 export function zloty(amount: number) {
   return `${amount.toFixed(2)} zł`;
 }
+
+export function getFuelSearchParams(urlStr: string) {
+  const url = new URL(urlStr);
+  const search = new URLSearchParams(url.search);
+
+  const from = search.get('from');
+  const to = search.get('to');
+
+  return { from, to };
+}

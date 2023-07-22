@@ -3,12 +3,11 @@ import classnames from 'classnames';
 
 import Card from '@components/Card.astro';
 import RootLayout from '@layouts/RootLayout.astro';
+import { getFuelSearchParams } from '@utils/fuel';
 
 const url = new URL(Astro.request.url);
 const search = new URLSearchParams(url.search);
-
-const from = search.get('from');
-const to = search.get('to');
+const { from, to } = getFuelSearchParams(Astro.request.url);
 
 const tabs = [
   {
@@ -63,6 +62,7 @@ const tabs = [
       <input class="input-bordered input input-xs join-item" type="date" name="to" value={to} />
 
       <button class="btn-xs join-item btn">Filtruj</button>
+      <a href={url.pathname} class="btn-secondary btn-xs join-item btn">Resetuj</a>
     </form>
   </Card>
   <slot />

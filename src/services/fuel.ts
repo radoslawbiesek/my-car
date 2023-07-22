@@ -37,16 +37,16 @@ export class FuelService {
     return row;
   }
 
-  async getData() {
+  async getData(fromDate?: string | null, toDate?: string | null) {
     const sheetService = await SheetService.getInstance();
     const sheet = await sheetService.getSheet('fuel');
 
     const initialRows = await sheet.getRows<FuelRowData>();
 
-    const rows = initialRows.map((row) => {
-      const date = row.get('date');
-      const city = row.get('city');
-      const station = row.get('station');
+    let rows = initialRows.map((row) => {
+      const date = row.get('date') as string;
+      const city = row.get('city') as string;
+      const station = row.get('station') as string;
       const mileage = parseInt(row.get('mileage'));
       const amount = parseFloat(row.get('amount')?.replace(',', '.').replace(' ', ''));
       const cost = parseFloat(row.get('cost')?.replace(',', '.').replace(' ', '')); // '100 000,01' -> 100000.01
@@ -66,6 +66,16 @@ export class FuelService {
         costDiff,
       };
     });
+
+    if (rows.length >= 2 && (fromDate || toDate)) {
+      const fromDateFallback = fromDate || (rows[0]!.date as string);
+      const toDateFallback = toDate || (rows.at(-1)!.date as string);
+      rows = rows.filter(
+        ({ date }) =>
+          new Date(date) >= new Date(fromDateFallback) &&
+          new Date(date) <= new Date(toDateFallback),
+      );
+    }
 
     const totalFuelUsage = calculateFuelUsage(rows);
     const lastFuelUsage = calculateFuelUsage(rows.slice(-2));

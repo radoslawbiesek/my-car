@@ -2,10 +2,11 @@
 import Card from '@components/Card.astro';
 import FuelLayout from '@layouts/FuelLayout.astro';
 import { FuelService } from '@services/fuel';
-import { calculateFuelUsage, sum, zloty } from '@utils/fuel';
+import { calculateFuelUsage, sum, zloty, getFuelSearchParams } from '@utils/fuel';
 
+const { from, to } = getFuelSearchParams(Astro.request.url);
 const fuelService = new FuelService();
-const { rows, totalFuelUsage } = await fuelService.getData();
+const { rows, totalFuelUsage } = await fuelService.getData(from, to);
 ---
 
 <FuelLayout>

@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { calculateCost, sum, zloty } from './fuel';
+import { calculateCost, sumBy, zloty } from './fuel';
 
 test.each([
   [100, 0, 100],
@@ -11,11 +11,11 @@ test.each([
 });
 
 test.each([
-  [[1, 2, 3], 6],
-  [[0, 1, -1], 0],
-  [[100, 1, 2], 103],
-])('sum(%i) -> %i', (arr, expected) => {
-  expect(sum(arr)).toBe(expected);
+  [[{ prop: 1 }, { prop: 2 }, { prop: 3 }], 6],
+  [[{ prop: 0 }, { prop: -1 }, { prop: 1 }], 0],
+  [[{ prop: 100 }, { prop: 1 }, { prop: 2 }], 103],
+])('sumBy(%i, el => el.prop) -> %i', (arr, expected) => {
+  expect(sumBy(arr, (el) => el.prop)).toBe(expected);
 });
 
 test.each([

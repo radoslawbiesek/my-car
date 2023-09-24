@@ -5,19 +5,30 @@ export function calculateCost(cost: number, vatDeduction: number): number {
   return parseFloat((cost * multiplier).toFixed(2));
 }
 
-export function calculateFuelUsage(rows: { mileage: number; amount: number }[]) {
+export function calculateFuelUsage(rows: { mileage: number; amount: number }[]): number {
   if (rows.length < 2) {
     return 0;
   }
 
   const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
-  const totalAmount = rows.slice(1).reduce((total, row) => total + row.amount, 0);
+  const totalAmount = sumBy(rows.slice(1), (el) => el.amount);
 
   return parseFloat(((totalAmount / totalMileage) * 100).toFixed(2));
 }
 
-export function sum(arr: number[]): number {
-  return arr.reduce((total, num) => total + num, 0);
+export function calculateCostPer100km(rows: { mileage: number; cost: number }[]): number {
+  if (rows.length < 2) {
+    return 0;
+  }
+
+  const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
+  const totalCost = sumBy(rows.slice(1), (el) => el.cost);
+
+  return (totalCost / totalMileage) * 100;
+}
+
+export function sumBy<T extends any>(arr: T[], iteratee: (el: T) => number) {
+  return arr.reduce((total, el) => total + iteratee(el), 0);
 }
 
 export function zloty(amount: number) {

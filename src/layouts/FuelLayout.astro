@@ -6,7 +6,7 @@ import RootLayout from '@layouts/RootLayout.astro';
 import { getFuelSearchParams } from '@utils/fuel';
 
 const url = new URL(Astro.request.url);
-const search = new URLSearchParams(url.search);
+const search = url.searchParams;
 const { from, to } = getFuelSearchParams(Astro.request.url);
 
 const tabs = [

@@ -1,5 +1,5 @@
 import { SheetService } from '@services/sheet';
-import { calculateCost, calculateFuelUsage } from '@utils/fuel';
+import { calculateCost, calculateCostPer100km, calculateFuelUsage } from '@utils/fuel';
 
 type FuelData = {
   date: string;
@@ -78,11 +78,13 @@ export class FuelService {
     }
 
     const totalFuelUsage = calculateFuelUsage(rows);
+    const totalCostPer100km = calculateCostPer100km(rows);
     const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
 
     return {
       rows,
       totalFuelUsage,
+      totalCostPer100km,
       lastFuelUsage,
     };
   }

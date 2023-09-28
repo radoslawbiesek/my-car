@@ -16,13 +16,13 @@ export function calculateFuelUsage(rows: { mileage: number; amount: number }[]):
   return parseFloat(((totalAmount / totalMileage) * 100).toFixed(2));
 }
 
-export function calculateCostPer100km(rows: { mileage: number; cost: number }[]): number {
+export function calculateCostPer100km(rows: { mileage: number; costReduced: number }[]): number {
   if (rows.length < 2) {
     return 0;
   }
 
   const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
-  const totalCost = sumBy(rows.slice(1), (el) => el.cost);
+  const totalCost = sumBy(rows.slice(1), (el) => el.costReduced);
 
   return (totalCost / totalMileage) * 100;
 }

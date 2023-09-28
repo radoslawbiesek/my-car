@@ -13,6 +13,15 @@ import {
 const { from, to } = getFuelSearchParams(Astro.request.url);
 const fuelService = new FuelService();
 const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(from, to);
+
+const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
+const totalAmount = sumBy(rows, (r) => r.amount);
+const totalCost = sumBy(rows, (r) => r.cost);
+const totalUnitCost = totalCost / totalAmount;
+const totalVatDeduction = sumBy(rows, (r) => r.deduction * r.cost) / sumBy(rows, (r) => r.cost);
+const totalCostReduced = sumBy(rows, (r) => r.costReduced);
+const totalCostDiff = sumBy(rows, (r) => r.costDiff);
+const totalUnitCostReduced = totalCostReduced / totalAmount;
 ---
 
 <FuelLayout>
@@ -28,10 +37,12 @@ const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(fr
               <th>Przebieg</th>
               <th>Ilość paliwa</th>
               <th>Koszt brutto</th>
+              <th>Zł brutto / l</th>
               <th colspan="2">Spalanie / 100 km</th>
               <th>Odliczenie VAT</th>
               <th>Koszt netto</th>
               <th>Różnica kosztu</th>
+              <th>Zł netto / l</th>
             </tr>
           </thead>
           <tbody>
@@ -46,6 +57,7 @@ const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(fr
                   <td>{row.mileage}</td>
                   <td>{row.amount} l</td>
                   <td>{zloty(row.cost)}</td>
+                  <td>{zloty(row.cost / row.amount)}</td>
                   <td>
                     {index > 0
                       ? calculateFuelUsage(rows.slice(index - 1, index + 1)).toFixed(2) + ' l'
@@ -59,6 +71,7 @@ const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(fr
                   <td>{row.deduction * 100}%</td>
                   <td>{zloty(row.costReduced)}</td>
                   <td>{zloty(row.cost - row.costReduced)}</td>
+                  <td>{zloty(row.costReduced / row.amount)}</td>
                 </tr>
               ))
             }
@@ -66,20 +79,16 @@ const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(fr
               rows.length > 0 && (
                 <tr class="bg-base-200 font-semibold">
                   <th colspan="3" />
-                  <td>{rows.at(-1)!.mileage - rows[0]!.mileage}</td>
-                  <td>{sumBy(rows, (r) => r.amount).toFixed(2)} l</td>
-                  <td>{zloty(sumBy(rows, (r) => r.cost))}</td>
-                  <td>{totalFuelUsage}</td>
+                  <td>{totalMileage}</td>
+                  <td>{totalAmount.toFixed(2)} l</td>
+                  <td>{zloty(totalCost)}</td>
+                  <td>{zloty(totalUnitCost)}</td>
+                  <td>{totalFuelUsage.toFixed(2)}</td>
                   <td>{zloty(totalCostPer100km)}</td>
-                  <td>
-                    {(
-                      (sumBy(rows, (r) => r.deduction * r.cost) / sumBy(rows, (r) => r.cost)) *
-                      100
-                    ).toFixed(0)}
-                    %
-                  </td>
-                  <td>{zloty(sumBy(rows, (r) => r.costReduced))}</td>
-                  <td>{zloty(sumBy(rows, (r) => r.costDiff))}</td>
+                  <td>{(totalVatDeduction * 100).toFixed(0)}%</td>
+                  <td>{zloty(totalCostReduced)}</td>
+                  <td>{zloty(totalCostDiff)}</td>
+                  <td>{zloty(totalUnitCostReduced)}</td>
                 </tr>
               )
             }

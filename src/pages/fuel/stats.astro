@@ -27,6 +27,8 @@ const stats = [
       value: endDate.toLocaleDateString('pl-PL').split('.').slice(0, 2).join('.'),
       desc: endDate.getFullYear(),
     },
+  ],
+  [
     {
       title: 'Przebieg',
       value: totalMileage,
@@ -48,12 +50,12 @@ const stats = [
   ],
   [
     {
-      title: 'Koszt jednostkowy netto',
+      title: 'Koszt j. netto',
       value: totalCostPer100km.toFixed(2),
       desc: 'zł  / 100 km',
     },
     {
-      title: 'Koszt całkowity netto',
+      title: 'Koszt netto',
       value: totalCostReduced.toFixed(2),
       desc: 'zł',
     },

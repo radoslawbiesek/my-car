@@ -2,26 +2,23 @@
 import Card from '@components/Card.astro';
 import FuelLayout from '@layouts/FuelLayout.astro';
 import { FuelService } from '@services/fuel';
-import {
-  calculateFuelUsage,
-  zloty,
-  getFuelSearchParams,
-  calculateCostPer100km,
-  sumBy,
-} from '@utils/fuel';
+import { calculateFuelUsage, zloty, getFuelSearchParams, calculateCostPer100km } from '@utils/fuel';
 
 const { from, to } = getFuelSearchParams(Astro.request.url);
 const fuelService = new FuelService();
-const { rows, totalFuelUsage, totalCostPer100km } = await fuelService.getData(from, to);
-
-const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
-const totalAmount = sumBy(rows, (r) => r.amount);
-const totalCost = sumBy(rows, (r) => r.cost);
-const totalUnitCost = totalCost / totalAmount;
-const totalVatDeduction = sumBy(rows, (r) => r.deduction * r.cost) / sumBy(rows, (r) => r.cost);
-const totalCostReduced = sumBy(rows, (r) => r.costReduced);
-const totalCostDiff = sumBy(rows, (r) => r.costDiff);
-const totalUnitCostReduced = totalCostReduced / totalAmount;
+const {
+  rows,
+  totalFuelUsage,
+  totalCostPer100km,
+  totalMileage,
+  totalUnitCost,
+  totalVatDeduction,
+  totalCostDiff,
+  totalUnitCostReduced,
+  totalAmount,
+  totalCost,
+  totalCostReduced,
+} = await fuelService.getData(from, to);
 ---
 
 <FuelLayout>

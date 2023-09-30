@@ -1,0 +1,26 @@
+---
+import classnames from 'classnames';
+
+export interface Props {
+  stats: {
+    title: string;
+    value: string | number;
+    valueClass?: string;
+    desc?: string | number;
+  }[];
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="stats flex">
+  {
+    stats.map((stat) => (
+      <div class="stat place-items-center">
+        <div class="stat-title">{stat.title}</div>
+        <div class={classnames('stat-value', stat.valueClass)}>{stat.value}</div>
+        {stat.desc && <div class="stat-desc">{stat.desc}</div>}
+      </div>
+    ))
+  }
+</div>

@@ -1,5 +1,5 @@
 import { SheetService } from '@services/sheet';
-import { calculateCost, calculateCostPer100km, calculateFuelUsage } from '@utils/fuel';
+import { calculateCost, calculateCostPer100km, calculateFuelUsage, sumBy } from '@utils/fuel';
 
 type FuelData = {
   date: string;
@@ -18,7 +18,7 @@ type FuelRowData = {
 export class FuelService {
   constructor() {}
 
-  async add(data: FuelData) {
+  public async add(data: FuelData) {
     const sheetService = await SheetService.getInstance();
     const sheet = await sheetService.getSheet('fuel');
 
@@ -37,7 +37,7 @@ export class FuelService {
     return row;
   }
 
-  async getData(fromDate?: string | null, toDate?: string | null) {
+  private async getRows(fromDate?: string | null, toDate?: string | null) {
     const sheetService = await SheetService.getInstance();
     const sheet = await sheetService.getSheet('fuel');
 
@@ -77,15 +77,35 @@ export class FuelService {
       );
     }
 
+    return rows;
+  }
+
+  public async getData(fromDate?: string | null, toDate?: string | null) {
+    const rows = await this.getRows(fromDate, toDate);
+
     const totalFuelUsage = calculateFuelUsage(rows);
     const totalCostPer100km = calculateCostPer100km(rows);
-    const lastFuelUsage = calculateFuelUsage(rows.slice(-2));
+    const totalMileage = rows.at(-1)!.mileage - rows[0]!.mileage;
+    const totalAmount = sumBy(rows, (r) => r.amount);
+    const totalCost = sumBy(rows, (r) => r.cost);
+    const totalUnitCost = totalCost / totalAmount;
+    const totalVatDeduction = sumBy(rows, (r) => r.deduction * r.cost) / sumBy(rows, (r) => r.cost);
+    const totalCostReduced = sumBy(rows, (r) => r.costReduced);
+    const totalCostDiff = sumBy(rows, (r) => r.costDiff);
+    const totalUnitCostReduced = totalCostReduced / totalAmount;
 
     return {
       rows,
       totalFuelUsage,
       totalCostPer100km,
-      lastFuelUsage,
+      totalMileage,
+      totalUnitCost,
+      totalVatDeduction,
+      totalCostDiff,
+      totalUnitCostReduced,
+      totalAmount,
+      totalCost,
+      totalCostReduced,
     };
   }
 }

@@ -1,4 +1,14 @@
-<div class="card w-full bg-base-100 shadow-xl">
+---
+import classnames from 'classnames';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: cls } = Astro.props;
+---
+
+<div class={classnames('card w-full bg-base-100 shadow-xl', cls)}>
   <div class="card-body">
     <div class="h-full w-full bg-base-100">
       <slot />

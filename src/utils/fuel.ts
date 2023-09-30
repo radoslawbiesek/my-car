@@ -37,10 +37,9 @@ export function zloty(amount: number) {
 
 export function getFuelSearchParams(urlStr: string) {
   const url = new URL(urlStr);
-  const search = new URLSearchParams(url.search);
 
-  const from = search.get('from');
-  const to = search.get('to');
+  const from = url.searchParams.get('from');
+  const to = url.searchParams.get('to');
 
   return { from, to };
 }
